@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronRight,
   Cpu,
@@ -7,12 +8,22 @@ import {
   MapPin,
   ArrowRight,
   Menu,
+  X,
   Mail,
   Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const NAV_LINKS = [
+  { label: "About Us", href: "#about" },
+  { label: "Focus Areas", href: "#focus" },
+  { label: "Initiatives", href: "#initiatives" },
+  { label: "Contact Us", href: "#contact" },
+];
+
 export default function Home() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -83,12 +94,7 @@ export default function Home() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-            {[
-              { label: "About Us", href: "#about" },
-              { label: "Focus Areas", href: "#focus" },
-              { label: "Initiatives", href: "#initiatives" },
-              { label: "Contact Us", href: "#contact" }
-            ].map((item) => (
+            {NAV_LINKS.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
@@ -110,11 +116,100 @@ export default function Home() {
             </Button>
           </div>
 
-          <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-mobile-menu">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            data-testid="button-mobile-menu"
+            onClick={() => setMobileOpen(true)}
+          >
             <Menu className="h-5 w-5" />
           </Button>
         </div>
       </header>
+
+      {/* Mobile Menu Drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileOpen(false)}
+              data-testid="mobile-menu-backdrop"
+            />
+
+            {/* Drawer panel */}
+            <motion.div
+              className="fixed top-0 right-0 z-50 h-full w-72 bg-[#0d0d0f] border-l border-white/8 flex flex-col md:hidden"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              data-testid="mobile-menu-drawer"
+            >
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-6 h-16 border-b border-white/8">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 bg-primary rounded-sm flex items-center justify-center flex-shrink-0">
+                    <span className="font-extrabold text-white text-xs">N</span>
+                  </div>
+                  <span className="font-bold tracking-tight text-sm">NEXUS MALAYSIA</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileOpen(false)}
+                  data-testid="button-mobile-close"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Nav links */}
+              <nav className="flex flex-col px-4 pt-6 gap-1 flex-1">
+                {NAV_LINKS.map((item, i) => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5 transition-all text-sm font-medium"
+                    data-testid={`mobile-link-${item.href.slice(1)}`}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * i + 0.1 }}
+                  >
+                    <span className="w-1 h-1 rounded-full bg-primary/60" />
+                    {item.label}
+                  </motion.a>
+                ))}
+              </nav>
+
+              {/* Drawer CTA */}
+              <div className="px-6 pb-8 pt-4 border-t border-white/8">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <Button
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                    onClick={() => setMobileOpen(false)}
+                    data-testid="button-mobile-cta"
+                  >
+                    Connect With Us
+                  </Button>
+                  <p className="text-xs text-center text-white/25 mt-3">nexusmalaysia.com</p>
+                </motion.div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <main>
         {/* 2. Hero Section */}
