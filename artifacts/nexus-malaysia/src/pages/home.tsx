@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from "framer-motion";
 import heroVisual from "../assets/hero-visual.png";
 import bitaimLogo from "../assets/bitaim-logo.png";
 import {
@@ -11,22 +11,108 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronLeft,
   Settings,
   CheckCircle,
   Loader2,
   ChevronDown,
   BookOpen,
-  Building2
+  Building2,
+  Quote
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
-  { label: "About Us", href: "#about" },
-  { label: "Focus Areas", href: "#focus" },
-  { label: "Initiatives", href: "#initiatives" },
-  { label: "Team", href: "#team" },
-  { label: "Apply", href: "#apply" },
-  { label: "Contact Us", href: "#contact" },
+  { label: "Tentang Kami", href: "#about" },
+  { label: "Bidang Fokus", href: "#focus" },
+  { label: "Inisiatif", href: "#initiatives" },
+  { label: "Pasukan", href: "#team" },
+  { label: "Daftar", href: "#apply" },
+  { label: "Hubungi Kami", href: "#contact" },
+];
+
+const heroSlides = [
+  {
+    badge: "Pertubuhan Berdaftar · Malaysia",
+    headline: ["Menghubungkan", "Bitcoin", "Intelligence", "& Masa Depan", "AI", "."],
+    sub: "Satu ekosistem terbuka untuk pengguna Bitcoin & AI, pendidik, dan pemimpin industri di Malaysia.",
+    desc: "Kami merapatkan jurang antara teknologi baru muncul, penyelidikan akademik, dan literasi digital akar umbi.",
+    img: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=900&q=80&fit=crop",
+    imgAlt: "Bitcoin dan AI visualisasi",
+    isFirstBitcoin: true,
+    isSecondAI: true,
+  },
+  {
+    badge: "Pendidikan Teknologi · SenangBit",
+    headline: ["Memupuk", "Literasi Digital", "untuk", "Malaysia", "Maju", "."],
+    sub: "Program latihan AI praktikal dan masterclass perniagaan digital untuk semua peringkat.",
+    desc: "Dari bengkel akar umbi hingga kolokium nasional — kami mendidik, kami memperkasa, kami memimpin.",
+    img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&q=80&fit=crop",
+    imgAlt: "Pendidikan digital dan teknologi",
+    isFirstBitcoin: false, // "Literasi Digital" in orange
+    isSecondAI: false,     // "Malaysia" in cyan
+  },
+  {
+    badge: "Ekosistem · Ko-operatif",
+    headline: ["Membina", "Ekosistem", "Bitcoin", "yang", "Berdaulat", "."],
+    sub: "Rangkaian rakan-ke-rakan yang berdaulat, boleh diakses oleh setiap rakyat Malaysia.",
+    desc: "Ko-operatif berasaskan teknologi, advokasi dasar, dan rangkaian komuniti yang berkembang pesat.",
+    img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80&fit=crop",
+    imgAlt: "Rangkaian blockchain global",
+    isFirstBitcoin: false, // "Ekosistem" in cyan
+    isSecondAI: false,     // "Bitcoin" in orange
+  }
+];
+
+const testimonials = [
+  {
+    quote: "BIT-AIM telah membuka mata saya kepada potensi sebenar Bitcoin sebagai alat kebebasan kewangan. Program SenangBit mereka adalah transformatif.",
+    name: "Ahmad Faizal",
+    title: "Usahawan Teknologi, Kuala Lumpur",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80&fit=crop&crop=face",
+  },
+  {
+    quote: "Kolokium BITAI adalah platform terbaik untuk menyatukan pemikir Bitcoin dan AI di Malaysia. Saya kagum dengan kualiti wacana yang dihasilkan.",
+    name: "Nurul Ain Zulkifli",
+    title: "Penyelidik AI, Universiti Malaya",
+    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b515?w=100&q=80&fit=crop&crop=face",
+  },
+  {
+    quote: "Sebagai pengamal industri, saya melihat BIT-AIM sebagai jambatan penting antara teknologi masa hadapan dan masyarakat umum Malaysia.",
+    name: "Dato' Rizal Mansor",
+    title: "Pengurus Besar, Syarikat Fintech",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80&fit=crop&crop=face",
+  },
+  {
+    quote: "Melalui BIT-AIM, saya berjaya memahami bagaimana AI dan Bitcoin boleh mengubah cara perniagaan dijalankan di negara kita.",
+    name: "Siti Hajar Mahmood",
+    title: "Pemilik Perniagaan, Pulau Pinang",
+    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80&fit=crop&crop=face",
+  }
+];
+
+const galleryImages = [
+  "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=250&q=70&fit=crop",
+  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&q=70&fit=crop",
+  "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&h=250&q=70&fit=crop",
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=250&q=70&fit=crop",
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&q=70&fit=crop",
+  "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&h=250&q=70&fit=crop"
+];
+
+const statsData = [
+  { value: 200, suffix: "+", label: "Ahli Berdaftar" },
+  { value: 12, suffix: "", label: "Bandar Merentasi Malaysia" },
+  { value: 8, suffix: "+", label: "Program Dijalankan" },
+  { value: 1, suffix: "", label: "Kolokium Nasional" }
+];
+
+const partners = [
+  { name: "MRANTI", desc: "Malaysian Research Accelerator" },
+  { name: "UNIKOP", desc: "Universiti Koperasi" },
+  { name: "TM One", desc: "Telekom Malaysia" },
+  { name: "ROS Malaysia", desc: "Registrar of Societies" },
+  { name: "SenangBit", desc: "AI Learning Platform" },
 ];
 
 function smoothScrollTo(href: string, onDone?: () => void) {
@@ -41,6 +127,10 @@ function smoothScrollTo(href: string, onDone?: () => void) {
 
 type Theme = "cyber" | "mono" | "fusion";
 
+function getInitials(name: string) {
+  return name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+}
+
 const avatarGradients = [
   "from-orange-500 to-amber-400",
   "from-cyan-500 to-blue-600",
@@ -50,43 +140,43 @@ const avatarGradients = [
   "from-indigo-500 to-blue-400"
 ];
 
-function getInitials(name: string) {
-  return name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-}
-
-function AnimatedCounter({ target, label }: { target: string, label: string }) {
+function AnimatedCounter({ target, label, suffix }: { target: number, label: string, suffix: string }) {
   const [count, setCount] = useState(0);
-  const targetNum = parseInt(target.replace(/[^0-9]/g, ''));
-  const suffix = target.replace(/[0-9]/g, '');
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    if (isInView) {
+      let start = 0;
+      const duration = 1500;
+      const interval = 16;
+      const steps = duration / interval;
+      const increment = target / steps;
+
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) {
+          setCount(target);
+          clearInterval(timer);
+        } else {
+          setCount(Math.floor(start));
+        }
+      }, interval);
+      return () => clearInterval(timer);
+    }
+  }, [isInView, target]);
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      onViewportEnter={() => {
-        let start = 0;
-        const duration = 1500;
-        const interval = 16;
-        const steps = duration / interval;
-        const increment = targetNum / steps;
-
-        const timer = setInterval(() => {
-          start += increment;
-          if (start >= targetNum) {
-            setCount(targetNum);
-            clearInterval(timer);
-          } else {
-            setCount(Math.floor(start));
-          }
-        }, interval);
-      }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       className="flex flex-col items-center justify-center p-4"
     >
-      <div className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-1">
+      <div className="text-4xl md:text-5xl font-black text-orange-500 tracking-tighter mb-1">
         {count}{suffix}
       </div>
-      <div className="text-xs text-white/50 uppercase tracking-widest font-semibold">{label}</div>
+      <div className="text-sm text-white/60 uppercase tracking-widest font-semibold text-center">{label}</div>
     </motion.div>
   );
 }
@@ -96,8 +186,22 @@ export default function Home() {
   const [theme, setTheme] = useState<Theme>("cyber");
   const [settingsOpen, setSettingsOpen] = useState(false);
 
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [isHeroPaused, setIsHeroPaused] = useState(false);
+  const [testimonialSlide, setTestimonialSlide] = useState(0);
+
   const { scrollY } = useScroll();
-  const heroImageY = useTransform(scrollY, [0, 400], [0, -40]);
+
+  useEffect(() => {
+    if (isHeroPaused) return;
+    const t = setInterval(() => setHeroSlide(s => (s + 1) % heroSlides.length), 5000);
+    return () => clearInterval(t);
+  }, [isHeroPaused]);
+
+  useEffect(() => {
+    const t = setInterval(() => setTestimonialSlide(s => (s + 1) % testimonials.length), 4000);
+    return () => clearInterval(t);
+  }, []);
 
   // Form State
   const [formState, setFormState] = useState<"idle" | "submitting" | "success">("idle");
@@ -202,78 +306,84 @@ export default function Home() {
 
   const focusCards = [
     {
-      title: "AI & Blockchain Convergence",
-      subtitle: "Exploring the Intersection",
-      desc: "We investigate and advocate for the powerful crossover of decentralized technology and AI — focusing on seamless global payments, autonomous robotic solutions, and deep on-chain analytics.",
+      title: "AI & Gabungan Blockchain",
+      subtitle: "Meneroka Persilangan",
+      desc: "Kami menyiasat dan memperjuangkan persilangan teknologi terdesentralisasi dan AI — memfokuskan pada pembayaran global tanpa sempadan, penyelesaian robotik autonomi, dan analitik on-chain mendalam.",
       icon: Cpu,
       accent: theme === "cyber" ? "text-cyan-400" : currentTheme.secondary,
       border: `hover:${currentTheme.cardBorder}`,
       glow: `group-hover:bg-white/5`,
-      tag: "DeFi + AI"
+      tag: "DeFi + AI",
+      bgImg: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop"
     },
     {
-      title: "Technical Education",
-      subtitle: "SenangBit AI Learning Series",
-      desc: "We design and deploy practical, actionable AI training frameworks and digital business masterclasses to upskill our members and communities.",
+      title: "Pendidikan Teknikal",
+      subtitle: "Siri Pembelajaran AI SenangBit",
+      desc: "Kami mereka dan melaksanakan rangka kerja latihan AI yang praktikal dan berimpak, serta masterclass perniagaan digital untuk meningkatkan kemahiran ahli dan komuniti kami.",
       icon: Bitcoin,
       accent: theme === "cyber" ? "text-orange-500" : currentTheme.primary,
       border: `hover:${currentTheme.cardBorder}`,
       glow: `group-hover:bg-white/5`,
-      tag: "EdTech"
+      tag: "EdTech",
+      bgImg: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80&fit=crop"
     },
     {
-      title: "Co-operative & Community",
-      subtitle: "Ecosystem Building",
-      desc: "Through structured discourses, national colloquiums, and networking sessions, we are establishing a resilient, tech-driven co-operative framework in Malaysia.",
+      title: "Ko-operatif & Komuniti",
+      subtitle: "Pembinaan Ekosistem",
+      desc: "Melalui wacana berstruktur, kolokium nasional, dan sesi rangkaian, kami sedang mewujudkan rangka kerja ko-operatif berasaskan teknologi yang kukuh di Malaysia.",
       icon: Users,
       accent: "text-white",
       border: `hover:${currentTheme.cardBorder}`,
       glow: `group-hover:bg-white/5`,
-      tag: "Co-op"
+      tag: "Ko-operatif",
+      bgImg: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80&fit=crop"
     },
     {
-      title: "Regional Advocacy",
-      subtitle: "Grassroots Engagement",
-      desc: "We drive localized Bitcoin advocacy and social-networking meetups across Malaysia's leading tech-oriented innovation hubs.",
+      title: "Advokasi Serantau",
+      subtitle: "Penglibatan Akar Umbi",
+      desc: "Kami mendorong advokasi Bitcoin setempat dan pertemuan rangkaian sosial di seluruh hab inovasi berorientasikan teknologi terkemuka di Malaysia.",
       icon: MapPin,
       accent: theme === "cyber" ? "text-orange-400" : currentTheme.primary,
       border: `hover:${currentTheme.cardBorder}`,
       glow: `group-hover:bg-white/5`,
-      tag: "Advocacy"
+      tag: "Advokasi",
+      bgImg: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=600&q=80&fit=crop"
     }
   ];
 
   const capabilities = [
     {
-      label: "Network",
-      desc: "Build a sovereign, peer-to-peer financial network accessible to every Malaysian.",
-      metrics: ["200+ Members", "12 Cities"]
+      label: "Rangkaian",
+      desc: "Membina rangkaian kewangan rakan-ke-rakan yang berdaulat dan boleh diakses oleh setiap rakyat Malaysia.",
+      metrics: ["200+ Ahli", "12 Bandar"]
     },
     {
-      label: "Barrier",
-      desc: "Break down educational and access barriers to Bitcoin and AI adoption.",
-      metrics: ["8 Programs", "3 Institutions"]
+      label: "Halangan",
+      desc: "Menghapuskan halangan pendidikan dan akses kepada penggunaan Bitcoin dan AI.",
+      metrics: ["8 Program", "3 Institusi"]
     },
     {
-      label: "Nodes",
-      desc: "Establish knowledge nodes across universities, accelerators, and co-working hubs.",
+      label: "Nod",
+      desc: "Mewujudkan nod ilmu di seluruh universiti, pemecut, dan hab kerja bersama.",
       metrics: ["MRANTI", "UNIKOP", "TM One"]
     },
     {
-      label: "Impact",
-      desc: "Drive measurable policy change and grassroots digital literacy.",
-      metrics: ["2 Policy Papers", "1 Colloquium"]
+      label: "Impak",
+      desc: "Mendorong perubahan dasar yang terukur dan literasi digital akar umbi.",
+      metrics: ["2 Kertas Dasar", "1 Kolokium"]
     }
   ];
 
   const team = [
-    { name: "Luqman Hakim", title: "Founder & President" },
-    { name: "Nazrin Shah", title: "Deputy President" },
-    { name: "Amirul Hadi", title: "Secretary General" },
-    { name: "Zulaikha Rahim", title: "Treasurer" },
-    { name: "Dr. Hafiz Zainudin", title: "Research Lead" },
-    { name: "Farah Nabilah", title: "Programs Director" }
+    { name: "Luqman Hakim", title: "Pengasas & Presiden" },
+    { name: "Nazrin Shah", title: "Timbalan Presiden" },
+    { name: "Amirul Hadi", title: "Setiausaha Agung" },
+    { name: "Zulaikha Rahim", title: "Bendahari" },
+    { name: "Dr. Hafiz Zainudin", title: "Ketua Penyelidikan" },
+    { name: "Farah Nabilah", title: "Pengarah Program" }
   ];
+
+  const doubledGalleryImages = [...galleryImages, ...galleryImages];
 
   return (
     <div className={`min-h-[100dvh] ${currentTheme.bg} ${currentTheme.text} transition-colors duration-500 font-sans selection:bg-white/20`} data-testid="page-root">
@@ -290,12 +400,12 @@ export default function Home() {
                 className={`absolute bottom-14 right-0 p-3 rounded-xl border ${currentTheme.cardBorder} ${currentTheme.bg} shadow-2xl backdrop-blur-xl w-48`}
                 data-testid="theme-panel"
               >
-                <p className="text-xs font-bold uppercase tracking-wider mb-3 text-white/50">Theme</p>
+                <p className="text-xs font-bold uppercase tracking-wider mb-3 text-white/50">Tema</p>
                 <div className="flex flex-col gap-2">
                   {[
-                    { id: "cyber", name: "Cyber Minimal" },
-                    { id: "mono", name: "Quantum Mono" },
-                    { id: "fusion", name: "Fusion Slate" }
+                    { id: "cyber", name: "Siber Minimal" },
+                    { id: "mono", name: "Mono Kuantum" },
+                    { id: "fusion", name: "Gabungan Slate" }
                   ].map((t) => (
                     <button
                       key={t.id}
@@ -349,7 +459,7 @@ export default function Home() {
               className={`border-white/10 hover:border-white/40 hover:text-white hover:bg-white/5 transition-all text-white bg-transparent`}
               data-testid="button-nav-cta"
             >
-              Connect With Us
+              Hubungi Kami
             </Button>
           </div>
 
@@ -434,7 +544,7 @@ export default function Home() {
                     }}
                     data-testid="button-mobile-cta"
                   >
-                    Connect With Us
+                    Hubungi Kami
                   </Button>
                   <p className="text-xs text-center text-white/25 mt-3">bitaim.my</p>
                 </motion.div>
@@ -445,8 +555,13 @@ export default function Home() {
       </AnimatePresence>
 
       <main>
-        {/* 2. Hero Section */}
-        <section className={`relative pt-32 pb-24 md:pt-48 md:pb-40 overflow-hidden border-b ${currentTheme.cardBorder} min-h-[90vh] flex flex-col justify-center`}>
+        {/* 2. Hero Carousel Section */}
+        <section 
+          id="hero"
+          className={`relative pt-32 pb-24 md:pt-48 md:pb-40 overflow-hidden border-b ${currentTheme.cardBorder} min-h-[90vh] flex flex-col justify-center`}
+          onMouseEnter={() => setIsHeroPaused(true)}
+          onMouseLeave={() => setIsHeroPaused(false)}
+        >
           {/* Animated Background Orbs */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <motion.div 
@@ -467,700 +582,692 @@ export default function Home() {
           </div>
 
           <div className="container mx-auto px-4 md:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-              <motion.div
-                className="lg:col-span-7 flex flex-col gap-8 relative"
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={heroSlide}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.6 }}
               >
-                {/* Floating Badges */}
-                <motion.div
-                  className="absolute -top-12 right-12 hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 backdrop-blur-md text-xs font-bold text-orange-400 uppercase tracking-widest"
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                >
-                  ₿ Bitcoin Standard
-                </motion.div>
-                <motion.div
-                  className="absolute top-32 -left-8 hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-md text-xs font-bold text-cyan-300 uppercase tracking-widest"
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ repeat: Infinity, duration: 5, delay: 1, ease: "easeInOut" }}
-                >
-                  AI-Powered
-                </motion.div>
-
-                <motion.div variants={fadeIn}>
-                  <span className={`inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-white/5 border ${currentTheme.cardBorder} rounded-full text-white/60 uppercase tracking-widest`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${currentTheme.primaryBg} animate-pulse`} />
-                    Registered Nonprofit · Malaysia
-                  </span>
-                </motion.div>
-
-                <div>
-                  <motion.h1
-                    variants={fadeIn}
-                    className="text-6xl md:text-8xl font-extrabold tracking-tight leading-[1.05]"
-                    data-testid="hero-heading"
+                <div className="lg:col-span-7 flex flex-col gap-8 relative">
+                  {/* Floating Badges */}
+                  <motion.div
+                    className="absolute -top-12 right-12 hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 backdrop-blur-md text-xs font-bold text-orange-400 uppercase tracking-widest"
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                   >
-                    Bridging{" "}
-                    <span 
-                      className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-400"
-                      style={{ textShadow: "0 0 40px rgba(249,115,22,0.4)" }}
+                    ₿ Piawaian Bitcoin
+                  </motion.div>
+                  <motion.div
+                    className="absolute top-32 -left-8 hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-md text-xs font-bold text-cyan-300 uppercase tracking-widest"
+                    animate={{ y: [0, 8, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, delay: 1, ease: "easeInOut" }}
+                  >
+                    Dikuasai AI
+                  </motion.div>
+
+                  <div>
+                    <span className={`inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold bg-white/5 border ${currentTheme.cardBorder} rounded-full text-white/60 uppercase tracking-widest`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${currentTheme.primaryBg} animate-pulse`} />
+                      {heroSlides[heroSlide].badge}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05]">
+                      {heroSlides[heroSlide].headline.map((word, i) => {
+                        let isOrange = false;
+                        let isCyan = false;
+                        
+                        if (heroSlide === 0) {
+                          if (word === "Bitcoin") isOrange = true;
+                          if (word === "AI") isCyan = true;
+                        } else if (heroSlide === 1) {
+                          if (word === "Literasi Digital") isOrange = true;
+                          if (word === "Malaysia") isCyan = true;
+                        } else if (heroSlide === 2) {
+                          if (word === "Bitcoin") isOrange = true;
+                          if (word === "Ekosistem") isCyan = true;
+                        }
+
+                        if (isOrange) {
+                          return (
+                            <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-400" style={{ textShadow: "0 0 40px rgba(249,115,22,0.4)" }}>
+                              {word}{" "}
+                            </span>
+                          );
+                        }
+                        if (isCyan) {
+                          return (
+                            <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500" style={{ textShadow: "0 0 40px rgba(34,211,238,0.4)" }}>
+                              {word}{" "}
+                            </span>
+                          );
+                        }
+                        return <span key={i}>{word} </span>;
+                      })}
+                    </h1>
+                    <div className="h-px w-24 bg-gradient-to-r from-orange-500 to-cyan-400 mt-8 opacity-70 animate-pulse" />
+                  </div>
+
+                  <p className="text-xl md:text-2xl text-white/70 font-medium leading-snug max-w-xl">
+                    {heroSlides[heroSlide].sub}
+                  </p>
+
+                  <p className="text-base text-white/50 max-w-lg leading-relaxed">
+                    {heroSlides[heroSlide].desc}
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                    <Button
+                      size="lg"
+                      onClick={() => smoothScrollTo("#focus")}
+                      className={`${currentTheme.primaryBg} hover:opacity-90 ${theme === 'mono' ? 'text-black' : 'text-white'} font-semibold h-14 px-8 text-base`}
                     >
-                      Bitcoin
-                    </span>{" "}
-                    Intelligence
-                    <br className="hidden md:block" />
-                    &amp;{" "}
-                    <span 
-                      className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
-                      style={{ textShadow: "0 0 40px rgba(34,211,238,0.4)" }}
+                      Jelajahi Inisiatif
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      onClick={() => smoothScrollTo("#apply")}
+                      className={`border-white/15 hover:bg-white/5 hover:border-white/30 h-14 px-8 font-semibold text-white bg-transparent text-base`}
                     >
-                      AI
-                    </span>{" "}
-                    Futures.
-                  </motion.h1>
-                  <motion.div 
-                    variants={fadeIn}
-                    className="h-px w-24 bg-gradient-to-r from-orange-500 to-cyan-400 mt-8 opacity-70 animate-pulse"
-                  />
+                      Mohon Keahlian
+                    </Button>
+                  </div>
                 </div>
 
-                <motion.p
-                  variants={fadeIn}
-                  className="text-xl md:text-2xl text-white/70 font-medium leading-snug max-w-xl"
-                  data-testid="hero-subheadline"
-                >
-                  An open confluence of{" "}
-                  <span className={`text-transparent bg-clip-text bg-gradient-to-r ${theme === 'cyber' ? 'from-cyan-400 to-blue-400' : theme === 'fusion' ? 'from-blue-300 to-indigo-300' : 'from-zinc-300 to-zinc-500'}`}>
-                    Bitcoin &amp; AI
-                  </span>{" "}
-                  users, educators, and industry leaders in Malaysia.
-                </motion.p>
-
-                <motion.p
-                  variants={fadeIn}
-                  className="text-base text-white/50 max-w-lg leading-relaxed"
-                  data-testid="hero-description"
-                >
-                  We bridge the gap between emerging technology, academic research, and grassroots digital literacy to build a future-proof ecosystem.
-                </motion.p>
-
-                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <Button
-                    size="lg"
-                    onClick={() => smoothScrollTo("#focus")}
-                    className={`${currentTheme.primaryBg} hover:opacity-90 ${theme === 'mono' ? 'text-black' : 'text-white'} font-semibold h-14 px-8 text-base`}
-                    data-testid="button-hero-primary"
-                  >
-                    Explore Initiatives
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    onClick={() => smoothScrollTo("#apply")}
-                    className={`border-white/15 hover:bg-white/5 hover:border-white/30 h-14 px-8 font-semibold text-white bg-transparent text-base`}
-                    data-testid="button-hero-secondary"
-                  >
-                    Apply for Membership
-                  </Button>
-                </motion.div>
-
-                {/* Animated Stats Strip below CTAs */}
-                <motion.div 
-                  variants={fadeIn}
-                  className="flex items-center divide-x divide-white/10 mt-8 pt-8 border-t border-white/5"
-                >
-                  <AnimatedCounter target="200+" label="Members Nationwide" />
-                  <AnimatedCounter target="12" label="Cities Reached" />
-                  <AnimatedCounter target="1" label="National Colloquium" />
-                </motion.div>
-
-              </motion.div>
-
-              <motion.div
-                className="lg:col-span-5 hidden lg:block"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.9, delay: 0.3 }}
-                style={{ y: heroImageY }}
-              >
-                <div className="relative w-full aspect-square flex items-center justify-center">
-                  {/* Rotating outer ring */}
-                  <motion.div 
-                    className="absolute inset-0 rounded-full border border-transparent"
-                    style={{ background: "conic-gradient(from 0deg, transparent, rgba(249,115,22,0.5), transparent, rgba(34,211,238,0.5), transparent) border-box", WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "destination-out" }}
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-                  />
-                  {/* Glowing pulse ring */}
-                  <motion.div 
-                    className="absolute inset-8 rounded-full border border-white/10 bg-white/5"
-                    animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.8, 0.5] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  />
-                  
-                  <div className="relative w-4/5 h-4/5 rounded-3xl overflow-hidden shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10 z-20 pointer-events-none" />
-                    <img
-                      src={heroVisual}
-                      alt="Bitcoin and AI convergence visualization"
-                      className="w-full h-full object-cover"
-                      data-testid="hero-image"
+                <div className="lg:col-span-5 hidden lg:block">
+                  <div className="relative w-full aspect-square rounded-full flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse" />
+                    <img 
+                      src={heroSlides[heroSlide].img} 
+                      alt={heroSlides[heroSlide].imgAlt}
+                      className="relative z-10 w-full h-full object-cover rounded-3xl opacity-90 shadow-2xl border border-white/10" 
                     />
                   </div>
                 </div>
               </motion.div>
+            </AnimatePresence>
+
+            {/* Carousel Controls */}
+            <div className="flex items-center gap-4 mt-12 lg:mt-16">
+              <Button variant="outline" size="icon" className="border-white/20 bg-white/5 text-white hover:bg-white/10" onClick={() => setHeroSlide((s) => (s - 1 + heroSlides.length) % heroSlides.length)}>
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+              <div className="flex gap-2">
+                {heroSlides.map((_, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setHeroSlide(i)}
+                    className={`h-2 rounded-full transition-all ${i === heroSlide ? 'w-8 bg-orange-500' : 'w-2 bg-white/20 hover:bg-white/40'}`} 
+                  />
+                ))}
+              </div>
+              <Button variant="outline" size="icon" className="border-white/20 bg-white/5 text-white hover:bg-white/10" onClick={() => setHeroSlide((s) => (s + 1) % heroSlides.length)}>
+                <ChevronRight className="w-5 h-5" />
+              </Button>
             </div>
           </div>
 
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30"
-            animate={{ y: [0, 6, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          >
-            <span className="text-xs tracking-widest uppercase font-semibold">Scroll</span>
+            key={heroSlide}
+            className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-orange-500 to-cyan-400"
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 5, ease: "linear" }}
+          />
+
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+            <span className="text-[10px] font-bold uppercase tracking-widest">Tatal</span>
             <ChevronDown className="w-4 h-4" />
-          </motion.div>
-        </section>
-
-        {/* 3. About / Mission */}
-        <section id="about" className={`border-b ${currentTheme.cardBorder} bg-white/[0.015]`}>
-          <div className="container mx-auto px-4 md:px-8 py-24 md:py-32">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={sectionReveal}
-              className="max-w-6xl mx-auto"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
-                <div>
-                  <p className={`text-xs font-bold uppercase tracking-widest ${currentTheme.primary} mb-6`}>
-                    Our Mission · Building Digital Literacy
-                  </p>
-                  <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-snug" data-testid="about-heading">
-                    Intelligence Meets{" "}
-                    <span className={`text-transparent bg-clip-text bg-gradient-to-r ${theme === 'cyber' ? 'from-orange-500 via-orange-400 to-cyan-400' : theme === 'fusion' ? 'from-[#D4AF37] to-blue-300' : 'from-zinc-100 to-zinc-500'}`}>
-                      Decentralisation.
-                    </span>
-                  </h2>
-                  <p className="text-lg text-white/60 leading-relaxed" data-testid="about-description">
-                    Officially registered as <span className="text-white/90 italic">Pertubuhan Literasi Bitcoin &amp; AI (Malaysia)</span>, BIT-AIM serves as a unified ecosystem bringing together industry professionals, academia, and everyday users. We are dedicated to dispelling misconceptions surrounding decentralized assets and artificial intelligence, transforming them into clear, accessible pathways for national economic growth and technical education.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { icon: Users, num: "200+", label: "Active Members", color: "text-orange-500" },
-                    { icon: MapPin, num: "12", label: "Cities", color: "text-cyan-400" },
-                    { icon: BookOpen, num: "8", label: "Programs Run", color: "text-blue-400" },
-                    { icon: Building2, num: "3", label: "Institutions", color: "text-amber-400" }
-                  ].map((stat, i) => (
-                    <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
-                      <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                      <div>
-                        <div className="text-3xl font-black text-white">{stat.num}</div>
-                        <div className="text-xs text-white/50 font-semibold uppercase tracking-wider mt-1">{stat.label}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <motion.div
-                variants={staggerContainer}
-                className="flex flex-wrap justify-center gap-x-10 gap-y-4 text-xs font-semibold text-white/60 uppercase tracking-widest w-full pt-8 border-t border-white/5"
-                data-testid="credibility-banner"
-              >
-                {[
-                  { dot: theme === 'cyber' ? "bg-orange-500" : currentTheme.primaryBg, label: "Registered Nonprofit" },
-                  { dot: theme === 'cyber' ? "bg-cyan-400" : currentTheme.secondaryBg, label: "Academic Partnerships" },
-                  { dot: "bg-white/40", label: "Industry Representation" },
-                  { dot: theme === 'cyber' ? "bg-orange-400/60" : currentTheme.primaryBg, label: "Community-Driven" }
-                ].map((item, i) => (
-                  <motion.div key={i} variants={fadeIn} className="flex items-center gap-2">
-                    <span className={`w-1.5 h-1.5 rounded-full ${item.dot}`} />
-                    <span>{item.label}</span>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-            </motion.div>
           </div>
         </section>
 
-        {/* 4. Core Focus Grid */}
-        <section id="focus" className="py-24 md:py-36 relative">
+        {/* Stats Counter Section */}
+        <section id="stats" className="py-12 border-b border-white/5 bg-white/[0.02]">
           <div className="container mx-auto px-4 md:px-8">
-            <motion.div
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/5">
+              {statsData.map((stat, i) => (
+                <AnimatedCounter key={i} target={stat.value} suffix={stat.suffix} label={stat.label} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 3. About Section */}
+        <section id="about" className="py-24 md:py-32 relative">
+          <div className="container mx-auto px-4 md:px-8">
+            <motion.div 
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={sectionReveal}
-              className="mb-16 max-w-xl"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
             >
-              <p className={`text-xs font-bold uppercase tracking-widest ${currentTheme.primary} mb-4`}>What We Do</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">Core Focus Areas</h2>
-              <p className="text-white/60 text-lg leading-relaxed">
-                We operate at the convergence of decentralized finance and artificial intelligence, building robust infrastructure for Malaysia's digital future.
-              </p>
-            </motion.div>
-
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={staggerContainer}
-              data-testid="focus-grid"
-            >
-              {focusCards.map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeIn}
-                  whileHover={{ y: -4, scale: 1.01 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className={`group relative p-8 md:p-10 rounded-3xl border ${currentTheme.cardBg} ${currentTheme.cardBorder} ${item.border} ${item.glow} transition-all duration-300 backdrop-blur-md overflow-hidden flex flex-col`}
-                  data-testid={`card-focus-${i}`}
-                >
-                  {/* Spotlight Background */}
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none group-hover:bg-white/[0.04] transition-colors" />
-                  
-                  {/* Accent Top Border */}
-                  <div className={`absolute top-0 left-0 w-full h-[2px] ${item.accent.replace('text-', 'bg-')} opacity-50`} />
-
-                  <div className={`mb-6 inline-flex p-3 rounded-xl bg-white/5 border ${currentTheme.cardBorder} group-hover:scale-110 transition-transform duration-300`}>
-                    <item.icon className={`w-6 h-6 ${item.accent}`} />
-                  </div>
-                  <p className={`text-xs font-bold uppercase tracking-widest mb-3 ${item.accent} opacity-70`}>
-                    {item.subtitle}
+              <div>
+                <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center gap-3">
+                  <span className="w-8 h-px bg-white/20" /> Misi Kami · Membina Literasi Digital dari Akar Umbi
+                </h3>
+                <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-8">
+                  Di Sini Kecerdasan <span className={theme === 'fusion' ? 'text-[#D4AF37]' : 'text-orange-500'}>Bertemu Desentralisasi.</span>
+                </h2>
+                <div className="space-y-6 text-lg text-white/60 leading-relaxed font-medium">
+                  <p>
+                    Didaftarkan secara rasmi sebagai <em className="text-white/80">Pertubuhan Literasi Bitcoin & AI (Malaysia)</em>, BIT-AIM berfungsi sebagai ekosistem bersatu yang menghimpunkan profesional industri, ahli akademik, dan pengguna biasa.
                   </p>
-                  <h3 className="text-2xl font-bold mb-4 tracking-tight">{item.title}</h3>
-                  <p className="text-white/60 leading-relaxed text-base flex-grow mb-8">{item.desc}</p>
-                  
-                  <div className="mt-auto">
-                    <span className="inline-flex items-center px-3 py-1 rounded-md bg-white/10 text-xs font-semibold text-white/70">
-                      {item.tag}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 5. Strategic Capabilities Matrix */}
-        <section id="capabilities" className={`py-24 border-y ${currentTheme.cardBorder} bg-white/[0.01]`}>
-          <div className="container mx-auto px-4 md:px-8">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={sectionReveal}
-              className="mb-16"
-            >
-              <p className={`text-xs font-bold uppercase tracking-widest ${currentTheme.primary} mb-4`}>What We Enable</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Strategic Capabilities</h2>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={staggerContainer}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12"
-              data-testid="capabilities-matrix"
-            >
-              {capabilities.map((cap, i) => (
-                <motion.div key={i} variants={fadeIn} className="flex relative pl-6">
-                  {/* Vertical Progress Bar */}
-                  <div className="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-orange-500 to-transparent opacity-50" />
-                  
-                  <div className="flex flex-col w-full">
-                    <h3 className={`text-2xl font-bold ${currentTheme.primary} mb-4 tracking-tight`}>{cap.label}</h3>
-                    <p className="text-white/60 text-base leading-relaxed mb-6 flex-grow">{cap.desc}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {cap.metrics.map((metric, idx) => (
-                        <motion.span 
-                          key={metric}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.1 * idx }}
-                          className={`px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider rounded-lg bg-white/5 border ${currentTheme.cardBorder} text-white/80`}
-                        >
-                          {metric}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 6. Direct CTA Banner */}
-        <section className="relative py-32 overflow-hidden">
-          <div className={`absolute inset-0 ${currentTheme.bg} z-0`} />
-          
-          {/* Animated gradient sweep background */}
-          <motion.div
-            className="absolute inset-0 opacity-20 pointer-events-none z-0"
-            style={{ background: "linear-gradient(135deg, transparent 0%, rgba(249,115,22,0.3) 50%, transparent 100%)" }}
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-          />
-
-          <div className={`absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-${theme === 'cyber' ? 'orange-500' : theme === 'mono' ? 'zinc-300' : '[#D4AF37]'} to-transparent z-10 opacity-50`} />
-          <div className={`absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-${theme === 'cyber' ? 'cyan-400' : theme === 'mono' ? 'zinc-300' : '[#D4AF37]'} to-transparent z-10 opacity-50`} />
-          
-          <div className="container mx-auto px-4 md:px-8 relative z-20 text-center">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6"
-            >
-              Ready to Shape Malaysia's Digital Future?
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed"
-            >
-              Join a community of Bitcoin practitioners, AI researchers, and digital advocates.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col items-center gap-5"
-            >
-              <Button
-                size="lg"
-                onClick={() => smoothScrollTo("#apply")}
-                className={`${currentTheme.primaryBg} hover:opacity-90 ${theme === 'mono' ? 'text-black' : 'text-white'} font-semibold h-16 px-12 text-lg rounded-full shadow-lg shadow-orange-500/20`}
-              >
-                Apply for Membership
-              </Button>
-              <a href="mailto:social@bitaim.my" className={`text-sm font-medium text-white/50 hover:${currentTheme.primary} transition-colors`}>
-                Or contact us at social@bitaim.my
-              </a>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 7. Initiatives Highlight */}
-        <section id="initiatives" className={`py-24 md:py-36 ${currentTheme.cardBg} border-y ${currentTheme.cardBorder} relative overflow-hidden`}>
-          {theme === 'cyber' && (
-            <>
-              <div className="absolute right-0 top-0 w-2/3 h-full bg-gradient-to-l from-orange-500/5 to-transparent pointer-events-none" />
-              <div className="absolute left-0 bottom-0 w-1/3 h-full bg-gradient-to-r from-cyan-400/5 to-transparent pointer-events-none" />
-            </>
-          )}
-
-          <div className="container mx-auto px-4 md:px-8 relative z-10">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={sectionReveal}
-              className="mb-12 max-w-xl"
-            >
-              <p className={`text-xs font-bold uppercase tracking-widest ${currentTheme.primary} mb-4`}>Current Operations</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Upcoming Initiatives</h2>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={sectionReveal}
-              whileHover={{ y: -4 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className={`max-w-4xl border ${theme === 'cyber' ? 'border-orange-500/25' : currentTheme.cardBorder} rounded-3xl p-8 md:p-12 bg-black/60 backdrop-blur-xl relative overflow-hidden shadow-2xl`}
-              data-testid="initiatives-highlight"
-            >
-              <div className={`absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-${theme === 'cyber' ? 'orange-500' : theme === 'mono' ? 'zinc-300' : '[#D4AF37]'} to-transparent`} />
-              <div className={`absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-${theme === 'cyber' ? 'cyan-400/40' : theme === 'mono' ? 'zinc-700' : 'blue-300/40'} to-transparent`} />
-
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-10">
-                <div className="flex-1">
-                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border ${currentTheme.cardBorder} ${currentTheme.primary} text-xs font-bold uppercase tracking-widest mb-8`}>
-                    <span className="relative flex h-2 w-2">
-                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentTheme.primaryBg} opacity-75`} />
-                      <span className={`relative inline-flex rounded-full h-2 w-2 ${currentTheme.primaryBg}`} />
-                    </span>
-                    Flagship Event
-                  </div>
-
-                  <h3 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight" data-testid="event-title">
-                    The BITAI Colloquium
-                  </h3>
-                  <p className="text-lg text-white/60 mb-8 leading-relaxed max-w-lg">
-                    An upcoming premium event bringing together over 200 tech leaders, innovators, and policymakers to chart the future of Bitcoin and AI in the region.
-                  </p>
-
-                  <div className="flex flex-wrap gap-3 mb-8">
-                    {["MRANTI", "UNIKOP"].map((partner) => (
-                      <span
-                        key={partner}
-                        className={`px-4 py-2 rounded-full border ${currentTheme.cardBorder} bg-white/5 text-xs font-bold text-white/80 uppercase tracking-wider`}
-                        data-testid={`partner-${partner.toLowerCase()}`}
-                      >
-                        {partner}
-                      </span>
-                    ))}
-                    <span className={`px-4 py-2 rounded-full border border-white/5 bg-white/[0.02] text-xs text-white/40 italic font-medium`}>
-                      + Strategic Partners
-                    </span>
-                  </div>
-
-                  <p className="text-sm text-white/40 font-mono italic bg-black/50 inline-block px-4 py-2 rounded-lg" data-testid="event-status">
-                    Logistics and framework currently in development.
+                  <p>
+                    Kami komited untuk menghapuskan salah faham tentang aset terdesentralisasi dan kecerdasan buatan, mengubahnya menjadi laluan yang jelas dan mudah diakses untuk pertumbuhan ekonomi negara dan pendidikan teknikal.
                   </p>
                 </div>
 
-                <div className="flex-shrink-0 flex flex-col gap-4 md:pt-12">
-                  <Button
-                    size="lg"
-                    className="bg-white text-black hover:bg-white/90 font-bold w-full md:w-auto h-14 px-8 text-base rounded-xl"
-                    data-testid="button-event-register"
-                  >
-                    Register Interest
-                    <ChevronRight className="ml-2 h-5 w-5" />
+                <div className="mt-10 grid grid-cols-2 gap-4">
+                  {["Pertubuhan Berdaftar", "Perkongsian Akademik", "Wakil Industri", "Dipacu Komuniti"].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <CheckCircle className={`w-5 h-5 ${theme === 'cyber' ? 'text-cyan-400' : currentTheme.primary}`} />
+                      <span className="text-sm font-semibold">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className={`absolute -inset-4 ${currentTheme.cardBg} rounded-[2rem] transform rotate-3 scale-105 opacity-50 border ${currentTheme.cardBorder}`} />
+                <img 
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&q=80&fit=crop" 
+                  alt="BIT-AIM Community" 
+                  className="relative z-10 w-full rounded-2xl shadow-xl border border-white/10"
+                />
+                <div className="absolute inset-0 z-20 rounded-2xl bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 4. Focus Areas */}
+        <section id="focus" className="py-24 md:py-32 relative bg-white/[0.02] border-y border-white/5">
+          <div className="container mx-auto px-4 md:px-8">
+            <div className="max-w-2xl mb-16">
+              <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center gap-3">
+                <span className="w-8 h-px bg-white/20" /> Apa Yang Kami Lakukan
+              </h3>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+                Bidang Fokus Utama
+              </h2>
+              <p className="text-lg text-white/60">
+                Kami beroperasi di persimpangan kewangan terdesentralisasi dan kecerdasan buatan, membina infrastruktur kukuh untuk masa depan digital Malaysia.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {focusCards.map((card, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  className={`group relative overflow-hidden rounded-2xl border ${currentTheme.cardBorder} bg-black/40 p-8 md:p-10 transition-all duration-300 ${card.border} ${card.glow}`}
+                >
+                  <img src={card.bgImg} alt={card.title} className="absolute inset-0 w-full h-full object-cover opacity-[0.07] rounded-2xl pointer-events-none" />
+                  
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className={`p-4 rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform duration-300 ${card.accent}`}>
+                        <card.icon className="w-8 h-8" />
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold border border-white/10 bg-white/5 text-white/70`}>
+                        {card.tag}
+                      </span>
+                    </div>
+
+                    <h4 className="text-sm font-bold tracking-wider uppercase text-white/50 mb-2">
+                      {card.subtitle}
+                    </h4>
+                    <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-white/90 transition-colors">
+                      {card.title}
+                    </h3>
+                    <p className="text-white/60 leading-relaxed font-medium mt-auto">
+                      {card.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 5. Capabilities Matrix */}
+        <section id="capabilities" className="py-24 md:py-32 relative">
+          <div className="container mx-auto px-4 md:px-8">
+            <div className="mb-16">
+              <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center gap-3">
+                <span className="w-8 h-px bg-white/20" /> Apa Yang Kami Perkasakan
+              </h3>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Keupayaan Strategik</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
+              {capabilities.map((cap, i) => (
+                <div key={i} className={`${currentTheme.bg} p-8 lg:p-10 flex flex-col hover:bg-white/[0.03] transition-colors`}>
+                  <div className={`text-4xl font-black mb-6 ${currentTheme.primary} opacity-30`}>0{i+1}</div>
+                  <h3 className="text-xl font-bold mb-4">{cap.label}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed mb-8 flex-1">{cap.desc}</p>
+                  <div className="space-y-2 mt-auto">
+                    {cap.metrics.map((metric, j) => (
+                      <div key={j} className="flex items-center gap-2 text-xs font-bold tracking-wider uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                        {metric}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Gallery Strip */}
+        <section className="py-12 overflow-hidden border-y border-white/5 bg-white/[0.01]">
+          <motion.div
+            className="flex gap-4"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 40, ease: "linear", repeat: Infinity }}
+            style={{ width: "200%" }}
+          >
+            {doubledGalleryImages.map((src, i) => (
+              <img 
+                key={i} 
+                src={src} 
+                alt="Gallery Event" 
+                className="h-48 w-72 rounded-xl object-cover opacity-80 hover:opacity-100 transition-opacity flex-shrink-0 border border-white/10"
+              />
+            ))}
+          </motion.div>
+        </section>
+
+        {/* 6. CTA Banner */}
+        <section className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-cyan-500/10 pointer-events-none" />
+          <div className="container mx-auto px-4 md:px-8 relative z-10 text-center">
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl mx-auto">
+              Bersedia Membentuk Masa Depan Digital Malaysia?
+            </h2>
+            <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto">
+              Sertai komuniti pengamal Bitcoin, penyelidik AI, dan peguam ekonomi digital.
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <Button
+                size="lg"
+                onClick={() => smoothScrollTo("#apply")}
+                className={`${currentTheme.primaryBg} ${theme === 'mono' ? 'text-black' : 'text-white'} hover:opacity-90 font-bold h-14 px-10 text-lg shadow-xl`}
+              >
+                Mohon Keahlian
+              </Button>
+              <span className="text-sm text-white/40">
+                Atau hubungi kami di <a href="mailto:social@nbaum.org" className="text-white hover:underline">social@nbaum.org</a>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Slider */}
+        <section id="testimonials" className="py-24 md:py-32 relative bg-white/[0.02] border-y border-white/5">
+          <div className="container mx-auto px-4 md:px-8">
+            <div className="flex justify-between items-end mb-16">
+              <div>
+                <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center gap-3">
+                  <span className="w-8 h-px bg-white/20" /> Suara Komuniti
+                </h3>
+                <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                  Apa Kata Mereka
+                </h2>
+              </div>
+              <div className="hidden md:flex gap-3">
+                <Button variant="outline" size="icon" className="border-white/10 bg-transparent text-white" onClick={() => setTestimonialSlide((s) => (s - 1 + testimonials.length) % testimonials.length)}>
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <Button variant="outline" size="icon" className="border-white/10 bg-transparent text-white" onClick={() => setTestimonialSlide((s) => (s + 1) % testimonials.length)}>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="overflow-hidden">
+              <motion.div 
+                className="flex gap-6"
+                initial={false}
+                animate={{ x: `calc(-${testimonialSlide * 100}% - ${testimonialSlide * 24}px)` }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                {testimonials.map((t, i) => (
+                  <div key={i} className={`min-w-full md:min-w-[calc(50%-12px)] flex-shrink-0 p-8 rounded-2xl border ${currentTheme.cardBorder} bg-black/40 relative`}>
+                    <Quote className="absolute top-8 right-8 w-16 h-16 text-white/[0.05] rotate-180" />
+                    <p className="text-lg text-white/80 font-medium leading-relaxed mb-8 relative z-10">"{t.quote}"</p>
+                    <div className="flex items-center gap-4">
+                      <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                      <div>
+                        <h4 className="font-bold text-white">{t.name}</h4>
+                        <p className="text-sm text-white/50">{t.title}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. Initiatives Section */}
+        <section id="initiatives" className="py-24 md:py-32 relative">
+          <div className="container mx-auto px-4 md:px-8">
+            <div className="mb-16">
+              <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center gap-3">
+                <span className="w-8 h-px bg-white/20" /> Operasi Semasa
+              </h3>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Inisiatif Akan Datang</h2>
+            </div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={sectionReveal}
+              className={`rounded-3xl border ${currentTheme.cardBorder} bg-white/[0.02] overflow-hidden`}
+            >
+              <div className="h-64 md:h-96 w-full relative">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&q=80&fit=crop" alt="BITAI Kolokium" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-black/50 to-transparent" />
+                <div className="absolute bottom-6 left-6 md:left-10 z-10">
+                  <span className={`inline-flex items-center gap-2 px-3 py-1 text-xs font-bold ${currentTheme.primaryBg} text-white uppercase tracking-widest rounded-full mb-4`}>
+                    Acara Utama
+                  </span>
+                  <h3 className="text-4xl md:text-6xl font-black text-white">BITAI Kolokium</h3>
+                </div>
+              </div>
+
+              <div className="p-8 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div className="md:col-span-2 space-y-6">
+                  <p className="text-xl text-white/70 font-medium leading-relaxed">
+                    Sebuah kolokium nasional yang menyatukan pengamal Bitcoin, penyelidik AI, pembuat dasar, dan penggemar teknologi dalam satu platform wacana berkuasa tinggi.
+                  </p>
+                  
+                  <div className="flex flex-col gap-2 p-6 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold uppercase text-white/40 tracking-wider">Status Semasa</span>
+                    <span className="font-semibold text-white/90">Logistik dan rangka kerja sedang dalam pembangunan</span>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <div>
+                    <span className="text-xs font-bold uppercase text-white/40 tracking-wider block mb-4">Rakan Kongsi:</span>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/5">
+                          <Building2 className="w-5 h-5 text-white/60" />
+                        </div>
+                        <span className="font-semibold text-white/80">MRANTI</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/5">
+                          <BookOpen className="w-5 h-5 text-white/60" />
+                        </div>
+                        <span className="font-semibold text-white/80">UNIKOP</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button className={`w-full ${currentTheme.primaryBg} hover:opacity-90 ${theme === 'mono' ? 'text-black' : 'text-white'} font-bold`}>
+                    Daftar Minat
                   </Button>
-                  <p className="text-xs text-center text-white/40 font-medium">No commitment required</p>
                 </div>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* 8. Executive Team */}
-        <section id="team" className="py-24 md:py-36">
+        {/* 8. Team Section */}
+        <section id="team" className="py-24 md:py-32 relative bg-white/[0.02] border-y border-white/5">
           <div className="container mx-auto px-4 md:px-8">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={sectionReveal}
-              className="mb-16 text-center max-w-2xl mx-auto"
-            >
-              <p className={`text-xs font-bold uppercase tracking-widest ${currentTheme.primary} mb-4`}>Leadership</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">The People Behind BIT-AIM</h2>
-            </motion.div>
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center justify-center gap-3">
+                <span className="w-8 h-px bg-white/20" /> Kepimpinan <span className="w-8 h-px bg-white/20" />
+              </h3>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Orang-Orang Di Sebalik BIT-AIM</h2>
+            </div>
 
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={staggerContainer}
-              className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10 max-w-5xl mx-auto"
-              data-testid="team-grid"
-            >
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
               {team.map((member, i) => (
                 <motion.div
                   key={i}
-                  variants={fadeIn}
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className={`p-8 rounded-3xl border ${currentTheme.cardBorder} ${currentTheme.cardBg} backdrop-blur-sm text-center flex flex-col items-center justify-center`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex flex-col items-center text-center group"
                 >
-                  <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full mb-6 flex items-center justify-center bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} shadow-lg`}>
-                    <span className="text-2xl md:text-3xl font-black text-white">{getInitials(member.name)}</span>
+                  <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full mb-6 relative border-2 ${currentTheme.cardBorder} p-1 overflow-hidden group-hover:scale-105 transition-transform duration-300`}>
+                    <div className={`w-full h-full rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center`}>
+                      <span className="text-2xl md:text-3xl font-black text-white/90 shadow-sm">{getInitials(member.name)}</span>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-xl text-white mb-2 tracking-tight">{member.name}</h3>
-                  <p className="text-sm font-medium text-white/50">{member.title}</p>
+                  <h4 className="font-bold text-lg mb-1 group-hover:text-white transition-colors">{member.name}</h4>
+                  <p className={`text-xs font-semibold uppercase tracking-wider ${theme === 'cyber' ? 'text-cyan-400' : currentTheme.primary}`}>{member.title}</p>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* 9. Application Form */}
-        <section id="apply" className={`py-24 md:py-36 bg-black/40 border-t ${currentTheme.cardBorder}`}>
-          <div className="container mx-auto px-4 md:px-8">
-            <div className="max-w-3xl mx-auto">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={sectionReveal}
-                className="text-center mb-12"
-              >
-                <p className={`text-xs font-bold uppercase tracking-widest ${currentTheme.primary} mb-4`}>Join The Network</p>
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">Apply for Membership</h2>
-                <p className="text-white/60 text-lg">
-                  We welcome Bitcoin advocates, AI practitioners, researchers, and digital economy enthusiasts.
-                </p>
-              </motion.div>
+        <section id="apply" className="py-24 md:py-32 relative">
+          <div className="container mx-auto px-4 md:px-8 max-w-4xl">
+            <div className="text-center mb-16">
+              <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-4 flex items-center justify-center gap-3">
+                <span className="w-8 h-px bg-white/20" /> Sertai Rangkaian <span className="w-8 h-px bg-white/20" />
+              </h3>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Mohon Keahlian</h2>
+              <p className="text-lg text-white/60 max-w-2xl mx-auto">
+                Kami mengalu-alukan penyokong Bitcoin, pengamal AI, penyelidik, dan peminat ekonomi digital.
+              </p>
+            </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden"
-              >
-                {/* Decorative left accent bar */}
-                <div className="absolute top-0 left-0 w-[3px] h-full bg-gradient-to-b from-orange-500 to-cyan-400" />
-
-                {formState === 'success' ? (
-                  <div className="py-16 flex flex-col items-center text-center animate-in fade-in zoom-in duration-500" data-testid="form-success">
-                    <div className={`w-20 h-20 rounded-full ${currentTheme.primaryBg}/20 flex items-center justify-center mb-8`}>
-                      <CheckCircle className={`w-10 h-10 ${currentTheme.primary}`} />
+            <div className={`rounded-3xl border ${currentTheme.cardBorder} bg-black/40 p-8 md:p-12 relative overflow-hidden`}>
+              <AnimatePresence mode="wait">
+                {formState === "success" ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center text-center py-12"
+                  >
+                    <div className={`w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-6`}>
+                      <CheckCircle className="w-10 h-10 text-green-400" />
                     </div>
-                    <h3 className="text-3xl font-bold mb-4 tracking-tight">Application Received!</h3>
-                    <p className="text-lg text-white/60 mb-10 max-w-md">
-                      We'll be in touch at <span className="text-white font-medium">{formData.email}</span> within 3–5 business days.
+                    <h3 className="text-3xl font-bold mb-4">Permohonan Diterima!</h3>
+                    <p className="text-white/60 mb-8 max-w-md">
+                      Kami akan menghubungi anda di <span className="text-white font-medium">{formData.email}</span> dalam masa 3–5 hari bekerja.
                     </p>
-                    <Button onClick={handleFormReset} variant="outline" className={`border-white/10 hover:bg-white/5 text-white bg-transparent h-12 px-8 text-base rounded-xl`}>
-                      Return to Site
+                    <Button
+                      variant="outline"
+                      onClick={handleFormReset}
+                      className="border-white/20 text-white bg-transparent hover:bg-white/10"
+                    >
+                      Kembali ke Laman
                     </Button>
-                  </div>
+                  </motion.div>
                 ) : (
-                  <form onSubmit={handleFormSubmit} className="flex flex-col gap-8 relative z-10" data-testid="application-form">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-sm font-semibold text-white/80 tracking-wide">Full Name</label>
+                  <motion.form
+                    key="form"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    onSubmit={handleFormSubmit}
+                    className="space-y-6"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-white/80">Nama Penuh</label>
                         <input
                           required
                           type="text"
+                          className={`w-full bg-white/5 border ${currentTheme.cardBorder} rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 ${currentTheme.inputRing} transition-all`}
+                          placeholder="cth. Ahmad Albab"
                           value={formData.name}
-                          onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white placeholder:text-white/30 focus:outline-none transition-all ${currentTheme.inputRing} focus:ring-2 focus:bg-white/10`}
-                          placeholder="Jane Doe"
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         />
                       </div>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-sm font-semibold text-white/80 tracking-wide">Email Address</label>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-white/80">Alamat E-mel</label>
                         <input
                           required
                           type="email"
+                          className={`w-full bg-white/5 border ${currentTheme.cardBorder} rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 ${currentTheme.inputRing} transition-all`}
+                          placeholder="cth. ahmad@example.com"
                           value={formData.email}
-                          onChange={(e) => setFormData({...formData, email: e.target.value})}
-                          className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white placeholder:text-white/30 focus:outline-none transition-all ${currentTheme.inputRing} focus:ring-2 focus:bg-white/10`}
-                          placeholder="jane@example.com"
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-sm font-semibold text-white/80 tracking-wide">Organisation / University</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-white/80">Organisasi / Universiti</label>
                         <input
                           required
                           type="text"
+                          className={`w-full bg-white/5 border ${currentTheme.cardBorder} rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 ${currentTheme.inputRing} transition-all`}
+                          placeholder="Tempat anda berkhidmat/belajar"
                           value={formData.org}
-                          onChange={(e) => setFormData({...formData, org: e.target.value})}
-                          className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white placeholder:text-white/30 focus:outline-none transition-all ${currentTheme.inputRing} focus:ring-2 focus:bg-white/10`}
-                          placeholder="e.g. UNIKOP"
+                          onChange={(e) => setFormData({ ...formData, org: e.target.value })}
                         />
                       </div>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-sm font-semibold text-white/80 tracking-wide">Role / Profession</label>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-white/80">Jawatan / Profesion</label>
                         <input
                           required
                           type="text"
+                          className={`w-full bg-white/5 border ${currentTheme.cardBorder} rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 ${currentTheme.inputRing} transition-all`}
+                          placeholder="cth. Penyelidik AI, Pelajar"
                           value={formData.role}
-                          onChange={(e) => setFormData({...formData, role: e.target.value})}
-                          className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white placeholder:text-white/30 focus:outline-none transition-all ${currentTheme.inputRing} focus:ring-2 focus:bg-white/10`}
-                          placeholder="e.g. Researcher"
+                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                         />
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2.5">
-                      <label className="text-sm font-semibold text-white/80 tracking-wide">Areas of Interest</label>
-                      <div className="relative">
-                        <select
-                          required
-                          value={formData.interest}
-                          onChange={(e) => setFormData({...formData, interest: e.target.value})}
-                          className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white appearance-none focus:outline-none transition-all ${currentTheme.inputRing} focus:ring-2 focus:bg-white/10`}
-                        >
-                          <option value="" disabled className="text-white/30 bg-black">Select an area...</option>
-                          <option value="Bitcoin Literacy" className="bg-black">Bitcoin Literacy</option>
-                          <option value="AI Research" className="bg-black">AI Research</option>
-                          <option value="Policy Advocacy" className="bg-black">Policy Advocacy</option>
-                          <option value="Community Building" className="bg-black">Community Building</option>
-                          <option value="All of the Above" className="bg-black">All of the Above</option>
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
-                      </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-white/80">Bidang Minat</label>
+                      <select
+                        required
+                        className={`w-full bg-[#1A1F2E] border ${currentTheme.cardBorder} rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 ${currentTheme.inputRing} transition-all appearance-none`}
+                        value={formData.interest}
+                        onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
+                      >
+                        <option value="" disabled>Pilih minat utama anda</option>
+                        <option value="bitcoin">Literasi Bitcoin</option>
+                        <option value="ai">Penyelidikan AI</option>
+                        <option value="policy">Advokasi Dasar</option>
+                        <option value="community">Pembinaan Komuniti</option>
+                        <option value="all">Semua Perkara Di Atas</option>
+                      </select>
                     </div>
 
-                    <div className="flex flex-col gap-2.5">
-                      <label className="text-sm font-semibold text-white/80 tracking-wide">Why do you want to join?</label>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-white/80">Kenapa anda ingin menyertai?</label>
                       <textarea
                         required
-                        rows={5}
+                        rows={4}
+                        className={`w-full bg-white/5 border ${currentTheme.cardBorder} rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 ${currentTheme.inputRing} transition-all resize-none`}
+                        placeholder="Kongsi sedikit tentang matlamat anda..."
                         value={formData.reason}
-                        onChange={(e) => setFormData({...formData, reason: e.target.value})}
-                        className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white placeholder:text-white/30 focus:outline-none transition-all resize-none ${currentTheme.inputRing} focus:ring-2 focus:bg-white/10`}
-                        placeholder="Tell us about your background and what you hope to achieve..."
+                        onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                       />
                     </div>
 
                     <Button
                       type="submit"
-                      disabled={formState === 'submitting'}
-                      className={`w-full mt-4 h-16 text-lg font-bold ${currentTheme.primaryBg} ${theme === 'mono' ? 'text-black' : 'text-white'} hover:opacity-90 transition-opacity rounded-xl shadow-lg`}
-                      data-testid="button-submit-application"
+                      disabled={formState === "submitting"}
+                      className={`w-full h-14 text-lg font-bold ${currentTheme.primaryBg} hover:opacity-90 ${theme === 'mono' ? 'text-black' : 'text-white'}`}
                     >
-                      {formState === 'submitting' ? (
+                      {formState === "submitting" ? (
                         <>
-                          <Loader2 className="mr-3 h-6 w-6 animate-spin" />
-                          Submitting Application...
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Menghantar...
                         </>
                       ) : (
-                        "Submit Application"
+                        "Hantar Permohonan"
                       )}
                     </Button>
-                  </form>
+                  </motion.form>
                 )}
-              </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </section>
-      </main>
 
-      {/* 10. Footer */}
-      <footer id="contact" className={`border-t ${currentTheme.cardBorder} bg-black py-12 md:py-16`}>
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
-            <div className="flex items-center gap-3" data-testid="footer-logo">
-              <img src={bitaimLogo} alt="BIT-AIM Logo" className="w-8 h-8 object-contain" />
-              <span className="font-bold tracking-tight text-lg text-white">BIT-AIM</span>
-            </div>
-            
-            <div className="flex items-center gap-6">
-              <a href="#" className="text-white/40 hover:text-white transition-colors">
-                <span className="sr-only">Twitter</span>
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                </svg>
-              </a>
-              <a href="mailto:social@bitaim.my" className="text-white/40 hover:text-white transition-colors">
-                <span className="sr-only">Email</span>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </a>
+        {/* Partners Strip */}
+        <section id="partners" className="py-16 border-t border-white/5 bg-white/[0.01]">
+          <div className="container mx-auto px-4 md:px-8 text-center">
+            <h3 className="text-xs font-bold tracking-widest uppercase text-white/50 mb-8">Rakan Ekosistem</h3>
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+              {partners.map((p, i) => (
+                <div key={i} className={`px-6 py-4 rounded-xl border ${currentTheme.cardBorder} bg-black/30 hover:bg-white/5 transition-all group cursor-default`}>
+                  <div className="text-lg font-bold text-white/90 group-hover:text-white">{p.name}</div>
+                  <div className="text-xs text-white/40">{p.desc}</div>
+                </div>
+              ))}
             </div>
           </div>
-          
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/40 border-t border-white/10 pt-8">
-            <p>&copy; {new Date().getFullYear()} Pertubuhan Literasi Bitcoin &amp; AI (Malaysia). All rights reserved.</p>
-            <p>bitaim.my</p>
+        </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer id="contact" className={`py-12 md:py-16 border-t ${currentTheme.cardBorder} bg-black relative overflow-hidden`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
+            <div className="md:col-span-5">
+              <div className="flex items-center gap-3 mb-6">
+                <img src={bitaimLogo} alt="BIT-AIM Logo" className="w-10 h-10 object-contain grayscale opacity-80" />
+                <span className="font-bold tracking-tight text-xl">BIT-AIM</span>
+              </div>
+              <p className="text-white/50 text-sm max-w-sm leading-relaxed">
+                Menghubungkan Bitcoin & AI untuk Malaysia.<br />
+                Membina ekosistem literasi digital, pendidikan teknikal, dan teknologi terdesentralisasi.
+              </p>
+            </div>
+            
+            <div className="md:col-span-3">
+              <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Hubungi Kami</h4>
+              <ul className="space-y-4">
+                <li><a href="mailto:social@nbaum.org" className="text-white/50 hover:text-white transition-colors text-sm">social@nbaum.org</a></li>
+                <li><a href="#" className="text-white/50 hover:text-white transition-colors text-sm">Kuala Lumpur, Malaysia</a></li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-4">
+              <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Pendaftaran</h4>
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <p className="text-xs text-white/60 leading-relaxed">
+                  Didaftarkan di bawah ROS Malaysia sebagai pertubuhan bukan untung.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-white/40">
+              © 2026 Pertubuhan Literasi Bitcoin & AI (Malaysia) (BIT-AIM). Hak cipta terpelihara.
+            </p>
+            <div className="flex gap-4">
+              <a href="#" className="text-xs text-white/40 hover:text-white">Terma</a>
+              <a href="#" className="text-xs text-white/40 hover:text-white">Privasi</a>
+            </div>
           </div>
         </div>
       </footer>
