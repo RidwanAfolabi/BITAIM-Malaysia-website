@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import heroVisual from "../assets/hero-visual.png";
 import {
   ChevronRight,
   Cpu,
@@ -307,29 +308,16 @@ export default function Home() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.9, delay: 0.3 }}
               >
-                <div className="relative w-full aspect-square border border-white/5 rounded-2xl bg-black/40 overflow-hidden flex items-center justify-center">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:22px_22px]" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-                  <div className="grid grid-cols-4 gap-3 w-4/5 h-4/5 relative z-10">
-                    {Array.from({ length: 16 }).map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className={`rounded-md border ${
-                          i % 5 === 0
-                            ? "border-primary/30 bg-primary/10"
-                            : i % 7 === 0
-                            ? "border-secondary/30 bg-secondary/10"
-                            : "border-white/8 bg-white/[0.03]"
-                        }`}
-                        animate={{ opacity: [0.5, 1, 0.5] }}
-                        transition={{
-                          duration: 3 + (i % 3),
-                          repeat: Infinity,
-                          delay: i * 0.15
-                        }}
-                      />
-                    ))}
-                  </div>
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/8 z-20 pointer-events-none" />
+                  <img
+                    src={heroVisual}
+                    alt="Bitcoin and AI convergence visualization"
+                    className="w-full h-full object-cover"
+                    data-testid="hero-image"
+                  />
                 </div>
               </motion.div>
             </div>
