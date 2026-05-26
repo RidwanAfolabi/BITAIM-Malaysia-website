@@ -21,6 +21,16 @@ const NAV_LINKS = [
   { label: "Contact Us", href: "#contact" },
 ];
 
+function smoothScrollTo(href: string, onDone?: () => void) {
+  const id = href.replace("#", "");
+  const el = document.getElementById(id);
+  if (!el) return;
+  const navHeight = 64;
+  const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+  window.scrollTo({ top, behavior: "smooth" });
+  onDone?.();
+}
+
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -98,7 +108,8 @@ export default function Home() {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                onClick={(e) => { e.preventDefault(); smoothScrollTo(item.href); }}
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 cursor-pointer"
                 data-testid={`link-${item.href.slice(1)}`}
               >
                 {item.label}
@@ -176,8 +187,8 @@ export default function Home() {
                   <motion.a
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5 transition-all text-sm font-medium"
+                    onClick={(e) => { e.preventDefault(); smoothScrollTo(item.href, () => setMobileOpen(false)); }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5 transition-all text-sm font-medium cursor-pointer"
                     data-testid={`mobile-link-${item.href.slice(1)}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
