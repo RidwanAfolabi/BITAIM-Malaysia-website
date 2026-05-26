@@ -1,0 +1,71 @@
+## Part 2: Essential Website Content (Copywriting)
+
+This is the exact copy structured for your website sections. It blends your legal identity (**Pertubuhan Literasi Bitcoin Malaysia**) with your modern branding (**Nexus Malaysia**).
+
+### 1. Navigation Bar
+
+* **Logo/Brand:** NEXUS MALAYSIA
+* **Menu Items:** About Us | Focus Areas | Initiatives | Contact Us
+* **CTA Button:** Connect With Us
+
+### 2. Hero Section
+
+* **Main Headline:** Intelligence Meets Decentralisation.
+* **Subheadline:** An open confluence of Bitcoin & AI users, educators, and industry leaders in Malaysia.
+* **Brief Intro:** We bridge the gap between emerging technology, academic research, and grassroots digital literacy to build a future-proof ecosystem.
+* **CTA Button 1 (Primary):** Explore Initiatives
+* **CTA Button 2 (Secondary):** Partner With Us
+
+### 3. About the Organisation
+
+> **Our Mission: Building Digital Literacy from the Ground Up**
+> Officially registered as *Pertubuhan Literasi Bitcoin Malaysia*, Nexus Malaysia serves as a unified ecosystem bringing together industry professionals, academia, and everyday users. We are dedicated to dispelling misconceptions surrounding decentralized assets and artificial intelligence, transforming them into clear, accessible pathways for national economic growth and technical education.
+
+---
+
+### 4. Core Focus Areas (2x2 Grid Layout)
+
+| Card 1: AI & Blockchain Convergence | Card 2: Technical Education |
+| --- | --- |
+| **Exploring the Intersection**<br>
+
+<br>We investigate and advocate for the powerful crossover of decentralized technology and AI—focusing on seamless global payments, autonomous robotic solutions, and deep on-chain analytics. | **SenangBit AI Learning Series**<br>
+
+<br>We design and deploy practical, actionable AI training frameworks and digital business masterclasses to upskill our members and communities. |
+
+| Card 3: Co-operative & Community | Card 4: Regional Advocacy |
+| --- | --- |
+| **Ecosystem Building**<br>
+
+<br>Through structured discourses, national colloquiums, and networking sessions, we are establishing a resilient, tech-driven co-operative framework in Malaysia. | **Grassroots Engagement**<br>
+
+<br>We drive localized "orange-pilling" (Bitcoin advocacy) and social-networking meetups across Malaysia's leading tech-oriented innovation hubs. |
+
+---
+
+### 5. Upcoming Initiatives Highlight
+
+* **Section Title:** Current Operations
+* **Featured Card Title:** The BITAI Colloquium
+* **Description:** An upcoming premium event bringing together over 200 tech leaders, innovators, and policymakers to chart the future of Bitcoin and AI in the region.
+* **Ecosystem Partners:** Developed in strategic alignment and collaboration with national technology accelerators like **MRANTI** and leading educational institutions including **UNIKOP**.
+* **Status:** *Logistics and framework currently in development.*
+
+### 6. Footer Section
+
+* **Left Column:**
+* **Nexus Malaysia**
+* *Pertubuhan Literasi Bitcoin Malaysia*
+* Advancing digital literacy, industry representation, and institutional collaboration.
+
+
+* **Middle Column (Contact):**
+* Inquiries: **social@nbaum.org**
+* Web: **nexusmalaysia.com**
+
+
+* **Right Column (Regulatory Note):**
+* Registered under the Registry of Societies (ROS) Malaysia.
+
+
+* **Bottom Bar:** © 2026 Pertubuhan Literasi Bitcoin Malaysia (Nexus Malaysia). All rights reserved.

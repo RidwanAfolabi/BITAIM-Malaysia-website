@@ -1,0 +1,106 @@
+Here is a comprehensive framework designed to give you a premium, international-standard online presence.
+
+It is structured into two parts: **The Master System Prompt** (which you can copy and paste directly into modern AI web builders like Framer AI, v0.dev, Relume, Bolt.new, or Wix ADI) and the **Ready-to-Use Website Content Copy**.
+
+---
+
+## Part 1: The Master AI Website Builder Prompt
+
+> **Copy and paste the block below into your AI Website Generator.**
+
+```text
+Act as an expert UI/UX designer and frontend developer specializing in international-standard tech organization websites (e.g., Ethereum Foundation, Stripe, Linear, OpenAI). 
+
+Design a professional, ultra-modern, and minimalistic landing page for "Pertubuhan Literasi Bitcoin Malaysia" (branded digitally as Nexus Malaysia). The domain is nexusmalaysia.com.
+
+### Aesthetic & Visual Guidelines:
+- Style: Minimalistic, high-tech, credible, clean.
+- Color Palette: Deep slate/charcoal backgrounds (Dark Mode optimized), crisp white typography, with subtle electric orange (Bitcoin) and technical cyan/blue (AI) accents used sparingly for highlights.
+- Typography: Clean, high-end sans-serif fonts (e.g., Inter, Satoshi, or SF Pro). Large, bold headings with generous whitespace (breathing room).
+- Layout Components: Sticky navigation bar, high-impact Hero section, 2x2 grid for Core Focus Areas, a clean "Upcoming Initiatives" banner, and a minimal footer. Avoid cluttered patterns, heavy illustrations, or generic crypto/AI stock images. Use clean lines, subtle gradients, and sleek border outlines.
+
+### Page Structure & Sections Required:
+1. Header/Navbar: Minimalist logo/text "NEXUS MALAYSIA", links to (About, Focus Areas, Initiatives, Contact).
+2. Hero Section: Clean, typography-driven split layout. Bold value proposition, a brief introductory paragraph, and two sleek Call-to-Action (CTA) buttons.
+3. Introduction Banner: A brief, high-credibility text section bridging industry, academia, and users.
+4. Core Focus Grid: A modern 4-card grid system layout detailing our main operations.
+5. Initiatives Highlight: A clean featured card showcasing our upcoming flagship colloquium.
+6. Footer: Minimal design featuring contact information, legal registry context, and copyright.
+
+Please generate the semantic HTML/CSS framework or interactive component layout matching this exact premium tech aesthetic.
+
+```
+
+---
+
+## Part 2: Essential Website Content (Copywriting)
+
+This is the exact copy structured for your website sections. It blends your legal identity (**Pertubuhan Literasi Bitcoin Malaysia**) with your modern branding (**Nexus Malaysia**).
+
+### 1. Navigation Bar
+
+* **Logo/Brand:** NEXUS MALAYSIA
+* **Menu Items:** About Us | Focus Areas | Initiatives | Contact Us
+* **CTA Button:** Connect With Us
+
+### 2. Hero Section
+
+* **Main Headline:** Intelligence Meets Decentralisation.
+* **Subheadline:** An open confluence of Bitcoin & AI users, educators, and industry leaders in Malaysia.
+* **Brief Intro:** We bridge the gap between emerging technology, academic research, and grassroots digital literacy to build a future-proof ecosystem.
+* **CTA Button 1 (Primary):** Explore Initiatives
+* **CTA Button 2 (Secondary):** Partner With Us
+
+### 3. About the Organisation
+
+> **Our Mission: Building Digital Literacy from the Ground Up**
+> Officially registered as *Pertubuhan Literasi Bitcoin Malaysia*, Nexus Malaysia serves as a unified ecosystem bringing together industry professionals, academia, and everyday users. We are dedicated to dispelling misconceptions surrounding decentralized assets and artificial intelligence, transforming them into clear, accessible pathways for national economic growth and technical education.
+
+---
+
+### 4. Core Focus Areas (2x2 Grid Layout)
+
+| Card 1: AI & Blockchain Convergence | Card 2: Technical Education |
+| --- | --- |
+| **Exploring the Intersection**<br>
+
+<br>We investigate and advocate for the powerful crossover of decentralized technology and AI—focusing on seamless global payments, autonomous robotic solutions, and deep on-chain analytics. | **SenangBit AI Learning Series**<br>
+
+<br>We design and deploy practical, actionable AI training frameworks and digital business masterclasses to upskill our members and communities. |
+
+| Card 3: Co-operative & Community | Card 4: Regional Advocacy |
+| --- | --- |
+| **Ecosystem Building**<br>
+
+<br>Through structured discourses, national colloquiums, and networking sessions, we are establishing a resilient, tech-driven co-operative framework in Malaysia. | **Grassroots Engagement**<br>
+
+<br>We drive localized "orange-pilling" (Bitcoin advocacy) and social-networking meetups across Malaysia's leading tech-oriented innovation hubs. |
+
+---
+
+### 5. Upcoming Initiatives Highlight
+
+* **Section Title:** Current Operations
+* **Featured Card Title:** The BITAI Colloquium
+* **Description:** An upcoming premium event bringing together over 200 tech leaders, innovators, and policymakers to chart the future of Bitcoin and AI in the region.
+* **Ecosystem Partners:** Developed in strategic alignment and collaboration with national technology accelerators like **MRANTI** and leading educational institutions including **UNIKOP**.
+* **Status:** *Logistics and framework currently in development.*
+
+### 6. Footer Section
+
+* **Left Column:**
+* **Nexus Malaysia**
+* *Pertubuhan Literasi Bitcoin Malaysia*
+* Advancing digital literacy, industry representation, and institutional collaboration.
+
+
+* **Middle Column (Contact):**
+* Inquiries: **social@nbaum.org**
+* Web: **nexusmalaysia.com**
+
+
+* **Right Column (Regulatory Note):**
+* Registered under the Registry of Societies (ROS) Malaysia.
+
+
+* **Bottom Bar:** © 2026 Pertubuhan Literasi Bitcoin Malaysia (Nexus Malaysia). All rights reserved.
