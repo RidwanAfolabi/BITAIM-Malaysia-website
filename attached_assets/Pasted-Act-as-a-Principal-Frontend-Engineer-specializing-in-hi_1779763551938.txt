@@ -1,0 +1,21 @@
+Act as a Principal Frontend Engineer specializing in high-performance, mobile-responsive React and Tailwind CSS applications. Build a fully functional, flawless single-page web app for "BIT-AIM" (Bitcoin & AI Malaysia). 
+
+### CRITICAL REQUIREMENTS (NO PLACEHOLDERS):
+1. ZERO BROKEN BUTTONS: Every link, button, and anchor must have a functional interactive state. Implement smooth-scroll behaviors for all navigation items.
+2. 100% MOBILE RESPONSIVE: Use a mobile-first Tailwind design pattern. The site must look flawless on iPhones, iPads, and large desktop screens.
+3. THEME VARIANT SWITCHER: Implement a state-driven theme controller (`useState`) with a floating premium settings cog/control button. Clicking it must dynamically swap the global CSS classes across these 3 styles without reloading:
+   - Variant 1 (Cyber Minimal): Slate background (#0B0F19), neon orange accents, glassmorphic cards.
+   - Variant 2 (Quantum Monochrome): True pure black (#000000), crisp silver borders, subtle deep blue ambient glows.
+   - Variant 3 (Fusion Slate): Dark navy-slate (#111827), muted champagne gold text accents, heavy blur backdrops.
+
+### CORE COMPONENTS TO CODE COMPLETELY:
+1. Interactive Navigation: Includes a fully functional mobile hamburger menu that slides or toggles open smoothly on smaller screens.
+2. Visual-Heavy Hero: Large bold typography ("Intelligence Meets Decentralisation."). The "Apply for Membership" button must smoothly anchor-scroll to the application form section.
+3. Minimalist Implicit Bento Grid: 4 premium cards detailing core operations (Convergence, Education, Co-operative, Advocacy) with elegant scaling scale/glow hover micro-animations.
+4. Strategic Capabilities Matrix: 4-column flat typography section outlining (Network, Barrier, Nodes, Impact).
+5. Direct Call-to-Action Banner: Sleek, punchy mid-page conversion section.
+6. Executive Team Section: Names-only grid layout using high-end minimalist cards.
+7. Fully Functional Application Form: Form inputs must have active focus states (glowing colored borders matching the selected variant theme). Clicking "Submit Application" must prevent default behavior, show a beautiful "Submitting..." state animation, and transition to a "Success/Thank You" modal or card state.
+8. Footer: Minimal clean link rows with email contact info. No regulatory numbers.
+
+Write complete, clean, modular code. Do not truncate components or use '// code goes here' comment shortcuts. Deliver a finished, highly sophisticated interactive experience.
