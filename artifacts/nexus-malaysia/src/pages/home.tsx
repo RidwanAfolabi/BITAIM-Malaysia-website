@@ -142,10 +142,17 @@ export default function Home() {
                   className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05]"
                   data-testid="hero-heading"
                 >
-                  Intelligence Meets{" "}
+                  Bridging{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
-                    Decentralisation.
-                  </span>
+                    Bitcoin
+                  </span>{" "}
+                  Intelligence
+                  <br className="hidden md:block" />
+                  &amp;{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-cyan-400">
+                    AI
+                  </span>{" "}
+                  Futures.
                 </motion.h1>
 
                 <motion.p
@@ -234,10 +241,13 @@ export default function Home() {
               className="max-w-4xl mx-auto text-center"
             >
               <motion.p variants={fadeIn} className="text-xs font-bold uppercase tracking-widest text-primary mb-6">
-                Our Mission
+                Our Mission · Building Digital Literacy from the Ground Up
               </motion.p>
-              <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold tracking-tight mb-6 leading-snug" data-testid="about-heading">
-                Building Digital Literacy from the Ground Up
+              <motion.h2 variants={fadeIn} className="text-3xl md:text-5xl font-bold tracking-tight mb-6 leading-snug" data-testid="about-heading">
+                Intelligence Meets{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-secondary">
+                  Decentralisation.
+                </span>
               </motion.h2>
               <motion.p variants={fadeIn} className="text-base md:text-lg text-muted-foreground leading-relaxed mb-10" data-testid="about-description">
                 Officially registered as{" "}
